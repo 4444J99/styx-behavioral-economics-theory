@@ -49,7 +49,7 @@ Library: `meta-organvm/praxis-perpetua/library/`
 ## Active Directives
 
 | Scope | Phase | Name | Description |
-|-------|-------|------|-------------|
+| ------- | ------- | ------ | ------------- |
 | system | any | atomic-clock | The Atomic Clock |
 | system | any | execution-sequence | Execution Sequence |
 | system | any | multi-agent-dispatch | Multi-Agent Dispatch |
@@ -130,7 +130,7 @@ Resolve: `organvm ontologia resolve styx-behavioral-economics-theory` | History:
 ## Live System Variables (Ontologia)
 
 | Variable | Value | Scope | Updated |
-|----------|-------|-------|---------|
+| ---------- | ------- | ------- | --------- |
 | `active_repos` | 89 | global | 2026-04-14 |
 | `archived_repos` | 54 | global | 2026-04-14 |
 | `ci_workflows` | 107 | global | 2026-04-14 |
