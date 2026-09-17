@@ -44,7 +44,7 @@ For an honest auditor with error rate epsilon <= 5%, the expected accuracy is FA
 ### Comparison with Related Mechanisms
 
 | Mechanism | IC Property | Styx Difference |
-|-----------|-------------|-----------------|
+| ----------- | ------------- | ----------------- |
 | Bayesian Truth Serum (Prelec, 2004) | IC under common prior | Styx uses penalty weighting, no common prior required |
 | Peer Prediction (Witkowski & Parkes, 2012) | Strict IC without common prior | Styx approximates with consensus + accuracy weighting |
 | Kleros | IC under Schelling focal points | Similar: honeypots test focal convergence |

@@ -29,7 +29,7 @@ Wearable health ecosystems (Apple HealthKit, Android Health Connect, Fitbit, Who
 The trust model assigns confidence levels to data sources:
 
 | Source | Trust Level | Spoofing Difficulty |
-|--------|------------|-------------------|
+| -------- | ------------ | ------------------- |
 | Apple Watch (hardware-attested) | High | Requires physical device manipulation |
 | Android wearable (Health Connect, hardware flag) | High | Requires OS-level exploit |
 | Fitbit tracker endpoint | Medium-High | Requires API interception |

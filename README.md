@@ -32,7 +32,7 @@ The downstream ORGAN-III consumer now exposes a live Styx Commerce UI in `peer-a
 ## Docs
 
 | Document | Scope |
-|----------|-------|
+| ---------- | ------- |
 | [behavioral-economics-foundations.md](docs/behavioral-economics-foundations.md) | Loss aversion, prospect theory, commitment devices, present bias |
 | [game-theoretic-accountability.md](docs/game-theoretic-accountability.md) | Fury audit mechanism design, dominant strategy proofs, reputation systems |
 | [spoof-resistance-models.md](docs/spoof-resistance-models.md) | Adversarial models, hardware immutability, multi-sensor correlation, HVCS |
