@@ -10,7 +10,7 @@ This repo extracts, formalizes, and maintains the behavioral economics theory th
 
 **Behavioral Economics Foundations** -- Loss aversion (Kahneman & Tversky, 1979), prospect theory, mental accounting (Thaler, 1999), and present-biased preferences (Laibson, 1997). The calibration constant lambda = 1.955 is the single most important number in the system: it quantifies how much more painful a lost stake feels compared to an equivalent reward.
 
-**Game-Theoretic Accountability** -- Mechanism design for the Fury peer-audit network. The central result (Theorem T4) proves that honest auditing is the dominant strategy under a 3x false-accusation penalty weight. Draws on Myerson's revelation principle, Prelec's Bayesian Truth Serum, and Schelling focal point theory to formalize why peer consensus converges on truth.
+**Game-Theoretic Accountability** -- Mechanism design for the Fury peer-audit network. The central result (Theorem T4) establishes a posterior decision threshold (reporting FAIL when posterior belief $q > 0.8$) under a 3x false-accusation penalty weight. Draws on Myerson's revelation principle, Prelec's Bayesian Truth Serum, and Schelling focal point theory to formalize why peer consensus converges on truth.
 
 **Spoof Resistance Models** -- Formal treatment of the adversarial model: how to ensure behavioral proofs cannot be fabricated. Covers hardware immutability constraints (wearable sensor metadata filtering), multi-sensor correlation requirements, and the cybernetic feedback model (HVCS) that treats the platform as a negative feedback control surface.
 
@@ -34,7 +34,7 @@ The downstream ORGAN-III consumer now exposes a live Styx Commerce UI in `peer-a
 | Document | Scope |
 | ---------- | ------- |
 | [behavioral-economics-foundations.md](docs/behavioral-economics-foundations.md) | Loss aversion, prospect theory, commitment devices, present bias |
-| [game-theoretic-accountability.md](docs/game-theoretic-accountability.md) | Fury audit mechanism design, dominant strategy proofs, reputation systems |
+| [game-theoretic-accountability.md](docs/game-theoretic-accountability.md) | Fury audit mechanism design, posterior decision threshold models, reputation systems |
 | [spoof-resistance-models.md](docs/spoof-resistance-models.md) | Adversarial models, hardware immutability, multi-sensor correlation, HVCS |
 | [taxis-audit-orchestration.md](docs/taxis-audit-orchestration.md) | Simulated stake routing, audit-agent spawning, and orchestration boundaries |
 | [genesis-hash.md](docs/genesis-hash.md) | Canonical genesis payload and SHA-256 verification procedure |
