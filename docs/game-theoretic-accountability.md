@@ -10,26 +10,40 @@ Mechanism design is "reverse game theory" -- rather than analyzing an existing g
 
 Nisan and Ronen (2001) add a computational constraint: polynomial-time mechanisms may sacrifice incentive compatibility, and vice versa. The Fury Router's BullMQ-based proof assignment is a practical algorithmic mechanism that must be both computationally efficient (real-time routing) and incentive-compatible. The current implementation uses random assignment plus weighted consensus -- polynomial time and approximately incentive-compatible.
 
-## Theorem T4: Honest Auditor Dominance
+## Theorem T4: Posterior Audit Decision Threshold
 
-The central game-theoretic result is Theorem T4, which proves that truth-telling is the dominant strategy for Fury auditors under the platform's penalty structure.
+The central game-theoretic result for single-audit decision-making is Theorem T4, which establishes a posterior belief threshold for reporting audit verdicts under the platform's asymmetric penalty structure.
 
-### Setup
+### Setup and Ground-Truth Assumptions
 
-Model each audit as a single-shot game. Fury auditor v observes proof p and submits verdict r_v in {PASS, FAIL}. The true state s in {PASS, FAIL} is determined by consensus or honeypot ground truth.
+Model each audit as a single-shot decision problem for an auditor $v$ who observes proof $p$ and submits verdict $r_v \in \{\text{PASS}, \text{FAIL}\}$.
 
-### The Fury Accuracy Function
+The true state $s \in \{\text{PASS}, \text{FAIL}\}$ is defined relative to ground truth:
+1. **Honeypot Ground Truth**: For injected test proofs, $s$ is deterministically known by the platform.
+2. **Consensus Ground Truth**: For production proofs without explicit oracle ground truth, $s$ is determined by the weighted majority consensus of the auditor panel.
 
-The accuracy function FA: F -> [0, 1] for auditor v with history (a_v, a_bar_v, n_v) is:
+### Scoring and Penalty Assumptions
+
+The auditor's cumulative performance is evaluated via the Fury Accuracy function $FA(v)$:
 
     FA(v) = clamp_01( (a_v - omega * a_bar_v) / n_v )    when n_v > 0
     FA(v) = 1.0                                            when n_v = 0
 
-where a_v counts correct audits, a_bar_v counts false accusations (incorrect FAIL verdicts on honest proofs), omega = 3 is the false accusation penalty weight, and n_v is total audit count. The demotion rule fires when FA(v) < 0.8 and n_v >= 10 (burn-in).
+where:
+- $a_v$ counts correct verdicts ($r_v = s$).
+- $a_{\bar{v}}$ counts false accusations ($r_v = \text{FAIL}$ when true state $s = \text{PASS}$).
+- $\omega = 3$ is the false accusation penalty weight.
+- $n_v$ is total audit count.
 
-### The Dominance Argument
+The scoring model embeds two key assumptions regarding outcome payoffs:
+- **False Accusation Penalty**: Reporting FAIL when true state $s = \text{PASS}$ incurs a penalty of $\omega = 3$ against the accuracy numerator ($a_v - \omega a_{\bar{v}}$).
+- **False Negative Scoring**: Reporting PASS when true state $s = \text{FAIL}$ receives 0 points added to $a_v$, but incurs no additional penalty multiplier beyond the opportunity cost of missing a correct verdict.
 
-For a single audit, let q = P(s = FAIL | evidence) be the auditor's private posterior belief.
+The demotion rule fires when $FA(v) < 0.80$ and $n_v \ge 10$ (burn-in period).
+
+### Posterior Threshold Derivation
+
+For a single audit, let $q = P(s = \text{FAIL} \mid \text{evidence})$ be the auditor's private posterior belief that the proof is invalid ($s = \text{FAIL}$).
 
 **Expected FA contribution of a FAIL verdict:**
     delta_FA_FAIL = (4q - 3) / n
@@ -37,9 +51,25 @@ For a single audit, let q = P(s = FAIL | evidence) be the auditor's private post
 **Expected FA contribution of a PASS verdict:**
     delta_FA_PASS = (1 - q) / n
 
-FAIL is better than PASS only when q > 0.8. This means the 3x penalty weight creates a *conservative* mechanism: auditors should only report FAIL when they are highly confident (80%+ posterior belief). The system biases toward PASS verdicts, protecting oath-takers from frivolous rejections.
+Comparing these expected contributions:
 
-For an honest auditor with error rate epsilon <= 5%, the expected accuracy is FA = 1 - 4*epsilon >= 0.80. They maintain participation indefinitely. A dishonest auditor with false accusation rate r > 5% gets FA = 1 - 4r < 0.80 and is demoted after the 10-audit burn-in. Truth-telling is therefore the weakly dominant strategy for any auditor seeking to maintain participation.
+    (4q - 3) / n > (1 - q) / n  <==>  4q - 3 > 1 - q  <==>  5q > 4  <==>  q > 0.8
+
+Thus, reporting FAIL yields higher expected score contribution if and only if $q > 0.80$. The $3\times$ penalty weight creates a conservative Bayesian decision threshold: auditors should only report FAIL when their posterior confidence that the proof is invalid exceeds 80%. The system intentionally biases toward PASS verdicts to protect honest oath-takers from frivolous rejections.
+
+### Posterior Best Response vs. Dominant Strategy
+
+It is critical to distinguish this posterior threshold from a dominant strategy:
+- **Not a Dominant Strategy**: A strategy is dominant (or weakly dominant) if it yields an equal or higher payoff than any alternative action regardless of the auditor's belief or the actions of other players. Truth-telling is not a dominant strategy here because the optimal report depends explicitly on the posterior belief $q$ and on how $s$ is determined. For instance, if an auditor observes weak evidence of failure ($q = 0.60$), reporting their true observation ($r_v = \text{FAIL}$) yields a lower expected accuracy contribution than reporting PASS. Furthermore, under consensus ground truth, $s$ depends on other panel members' reports, making optimal reporting dependent on others' actions rather than dominant.
+- **Bayesian Best Response**: The derivation establishes that reporting FAIL is a Bayesian best response under the scoring rule if and only if $q > 0.80$.
+
+### Required Mechanisms for Incentive Compatibility
+
+Because the 3x penalty weight alone does not constitute a dominant-strategy mechanism for truth-telling, full incentive compatibility across the network requires supplementary mechanisms:
+1. **Honeypot Injection**: Injected known-fail and known-pass proofs establish objective ground truth independent of panel consensus, penalizing lazy auditors who default to reporting PASS without examining evidence ($q = 0$).
+2. **Commit-Reveal Schemes**: Encrypted verdict submission prevents auditors from copying panel consensus or coordinating dishonest verdicts.
+3. **Peer Prediction / Bayesian Truth Serum**: Mechanisms like BTS or Witkowski-Parkes peer prediction reward reports that update consensus beliefs without requiring external ground truth.
+4. **Demotion and Staking Rules**: Long-term accuracy thresholds ($FA \ge 0.80$) align auditor retention with calibrated reporting over repeated audits.
 
 ### Comparison with Related Mechanisms
 
